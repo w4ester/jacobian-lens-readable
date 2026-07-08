@@ -72,6 +72,43 @@ asking me anything.
 
 That is the whole "getting started" experience: pick your machine, paste, watch it work.
 
+## Ask any model to walk you through the graph (no code)
+
+Opened a graph and not sure what you are looking at? You do not have to figure it out alone.
+Paste the prompt below into a model **that has browser tools** and it will open the page, read it,
+and tutor you through it, then keep answering your questions as you go.
+
+**Portable, not tied to any one product.** Any browser-automation path works: Playwright (for
+example the Playwright MCP, or the WF-AI `browser-automation` skill) lets a model drive a normal
+browser. You do **not** need a "Claude in Chrome" style extension, and it works with whichever model
+you are already using.
+
+```text
+I'm looking at a Jacobian-lens readable graph: either the slice.html I just made,
+or a demo at https://w4ester.github.io/jacobian-lens-readable/. Please open it in a
+browser and teach me to read it, in plain language, like a patient tutor.
+
+Use whatever browser tools you have. If you have Playwright (for example the
+Playwright MCP, or a browser-automation skill), use that. You do NOT need a special
+"Claude in Chrome" extension.
+
+  1. Open the page (navigate to the URL, or to my local slice.html file).
+  2. Read the REAL page, not just a screenshot: pull the title, the "blue box"
+     callout, the layer columns, the prompt words down the left, and which cell is
+     the highlighted peak (its word, its rank, its row word, and its layer number).
+  3. Explain it to me one idea at a time:
+       - what a ROW is (one word of my prompt),
+       - what a COLUMN is (one layer of the model, with the real output on the right),
+       - what the COLORS mean (how highly that spot ranks the tracked concept),
+       - then walk me to the blue-outlined peak box and give me the "aha" in one
+         sentence: the model had the answer in mind before it wrote a word.
+  4. Ask me what I want to explore, and answer by looking at the page again. If I
+     say "show me where X is strongest," find it and tell me the layer and the word.
+
+Keep it friendly and concrete. I am learning, and I want to understand what the
+model I am using is actually doing.
+```
+
 ## How to read the tables
 
 Each **row** is one word of the prompt. Reading a row **left to right** shows how the model's
