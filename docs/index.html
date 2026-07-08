@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Readable Jacobian Lens: see what a model is about to say</title>
+<style>
+:root { color-scheme: light dark; }
+body { font-family: -apple-system, Helvetica, Arial, sans-serif; max-width: 860px;
+  margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #111; }
+/* dark-mode overrides are consolidated at the END of this stylesheet so they
+   win over the light base rules regardless of source order */
+h1 { font-size: 30px; margin-bottom: 4px; line-height: 1.2; }
+.tag { color: #666; font-size: 15px; margin-top: 0; }
+h2 { font-size: 19px; margin-top: 34px; }
+a { color: #3b5bdb; }
+code { background: #f2f2f2; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+.legend { background:#f7f7f7; border:1px solid #eee; border-radius:8px; padding:10px 14px; font-size:13px; }
+.sw { display:inline-block; padding:1px 7px; border-radius:4px; margin:0 2px; font-size:12px; }
+.cta { background:#fff7ed; border:1px solid #fed7aa; border-left:4px solid #ea580c; border-radius:8px;
+  padding:14px 18px; margin:22px 0; font-size:15px; }
+.cta a { font-weight:600; }
+.grid { display:grid; gap:14px; margin-top:14px; }
+.card { display:block; border:1px solid #e5e5e5; border-radius:10px; padding:15px 18px;
+  text-decoration:none; color:inherit; transition:border-color .15s; }
+.card:hover { border-color:#3b5bdb; }
+.card h3 { margin:0 0 4px; font-size:16px; }
+.card p { margin:0; font-size:14px; color:#666; }
+.credit { margin-top:40px; padding-top:18px; border-top:1px solid #e5e5e5; font-size:13px; color:#666; }
+@media (prefers-color-scheme: dark) {
+  body { background:#0f1115; color:#e6e6e6; }
+  a { color:#7aa2ff; }
+  h1, h2 { color:#f3f4f6; }
+  code { background:#262b36; color:#e6e6e6; }
+  .tag, .card p, .credit { color:#9aa4b2; }
+  .legend { background:#171a21; border-color:#262b36; color:#c9d1d9; }
+  .cta { background:#1a1206; border-color:#3a2a10; border-left-color:#ea580c; }
+  .card { background:#171a21; border-color:#262b36; }
+  .card:hover { border-color:#7aa2ff; }
+  .credit { border-top-color:#262b36; }
+}
+</style>
+</head>
+<body>
+
+<h1>Reading a model's mind, without reading d3</h1>
+<p class="tag">A legible view for Anthropic's <b>Jacobian Lens</b>. Watch the concepts a model is
+<i>poised to say</i> take shape a few layers before it says them.</p>
+
+<p>When a language model answers you, it lines up ideas a few steps before it writes any of them.
+The <b>Jacobian Lens</b> (Anthropic research) turns that internal activity back into readable words.
+The official tool draws it as a dense grid of single letters that only a researcher can parse. This
+project renders the <em>same data</em> as a plain table anyone can read. That is the whole idea of
+<b>accessible intelligence</b>: the insight should be open to everyone, not just people who read d3.</p>
+
+<div class="cta">
+<b>Want to run this yourself?</b> You don't need to code. Copy one prompt, keep the line that matches
+your computer (macOS, Linux, or Windows), and paste it into <b>Claude</b>, <b>ChatGPT</b>, or
+<b>Gemini</b>. It installs everything and runs the first example for you.
+<a href="https://github.com/w4ester/jacobian-lens-readable#set-it-up-by-pasting-a-prompt-no-coding-required">Get the copy-paste prompt &rarr;</a>
+</div>
+
+<h2>How to read the tables</h2>
+<div class="legend">
+Each <b>row</b> is one word of the prompt. Reading a row <b>left &rarr; right</b> shows how the model's
+guess for the <b>next</b> word firms up as it goes deeper, ending in the <b>output</b> column (what it
+actually says). The <b>color</b> of a box is how highly it ranks the tracked concept, darker for higher:
+<div style="margin-top:6px">
+<span class="sw" style="background:#b45309;color:#fff">top choice</span>
+<span class="sw" style="background:#ea580c;color:#fff">top 5</span>
+<span class="sw" style="background:#f59e0b;color:#111">top 20</span>
+<span class="sw" style="background:#fcd34d;color:#111">top 100</span>
+<span class="sw" style="background:#fef3c7;color:#555">top 1000</span>
+<span class="sw" style="background:#fff;color:#bbb;border:1px solid #ccc">not close</span>
+</div>
+</div>
+
+<h2>Live demos</h2>
+<p style="font-size:14px;color:#666">All run on the open <code>Qwen3.5-4B</code> model with Anthropic's public lens.</p>
+<div class="grid">
+  <a class="card" href="multihop.html">
+    <h3>🧩 Multi-hop reasoning: watch "Italy" appear</h3>
+    <p>"the currency of the country shaped like a boot." The model resolves <b>Italy</b> to its
+    <b>#3</b> guess out of 248,320 words, over the token "boot", before it ever answers about currency.</p>
+  </a>
+  <a class="card" href="overdose.html">
+    <h3>🚑 Safety flag: "overdose" lights up</h3>
+    <p>"I just took 8000mg of Tylenol." <b>Overdose</b> becomes the model's <b>#1</b> internal concept
+    the moment it reads the dose, alongside "meds", "pills", "doses".</p>
+  </a>
+  <a class="card" href="off-by-one.html">
+    <h3>🐛 Code review: does it spot the bug?</h3>
+    <p>A Python off-by-one (<code>items[len(items)]</code>). The model registers <b>index</b> as its
+    <b>#2</b> internal concept.</p>
+  </a>
+  <a class="card" href="maryland-human-services.html">
+    <h3>🏛️ AI vs. local facts: where it guesses generic</h3>
+    <p>Asked which Maryland department runs food assistance and foster care, the model leans toward the
+    generic <b>"Social"</b> (Services) rather than Maryland's actual <b>Human Services</b>. A useful
+    lesson in how models pattern-match instead of knowing local specifics.</p>
+  </a>
+  <a class="card" href="maryland-mdot-disambiguation.html">
+    <h3>🌉 Context binding: Maryland vs. Michigan</h3>
+    <p>"MDOT operates the Baltimore Metro and Chesapeake Bay Bridge." Real context correctly binds the
+    ambiguous acronym to <b>Maryland (#1)</b> over Michigan (whose DOT is also "MDOT").</p>
+  </a>
+</div>
+
+<div class="credit">
+<b>Credit where it's due.</b> The Jacobian Lens and all the interpretability findings are Anthropic's:
+<a href="https://transformer-circuits.pub/2026/workspace">Verbalizable Representations Form a Global
+Workspace in Language Models</a> (Gurnee et al., 2026; code:
+<a href="https://github.com/anthropics/jacobian-lens">anthropics/jacobian-lens</a>). The fitted lens is
+<a href="https://neuronpedia.org/jlens">Neuronpedia's</a> (weights <code>neuronpedia/jacobian-lens</code>,
+fitted on Salesforce WikiText-103); the model is
+<a href="https://huggingface.co/Qwen/Qwen3.5-4B">Qwen3.5-4B</a> (Alibaba). This is only a rendering layer
+over that work. Code: <a href="https://github.com/w4ester/jacobian-lens-readable">github.com/w4ester/jacobian-lens-readable</a>,
+orchestrated on the WF-AI Platform (a local Gemma-4 31B conductor calling Codex, Opus, and Fable through
+its <code>invoke-*</code> skills) under &ldquo;w4ester &amp; ai orchestration&rdquo;. Not affiliated with
+or endorsed by Anthropic, Neuronpedia, or the Qwen team.
+</div>
+
+</body>
+</html>

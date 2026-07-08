@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jacobian-lens-readable"
+version = "0.1.0"
+description = "A legible, dependency-free HTML view for Anthropic's Jacobian Lens."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Will F", email = "11763006+w4ester@users.noreply.github.com" }]
+keywords = ["interpretability", "jacobian-lens", "visualization", "transformers", "education"]
+# No runtime dependencies: the renderer is pure standard-library Python.
+# It consumes a `jlens.vis.SliceData`, so you also need Anthropic's `jlens`
+# installed from source to PRODUCE one (see README), but that is not a PyPI
+# package, so it is not declared here.
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/w4ester/jacobian-lens-readable"
+Demo = "https://w4ester.github.io/jacobian-lens-readable/"
+"Upstream (Anthropic)" = "https://github.com/anthropics/jacobian-lens"
+Paper = "https://transformer-circuits.pub/2026/workspace"
+
+[tool.setuptools]
+packages = ["jlens_readable"]
