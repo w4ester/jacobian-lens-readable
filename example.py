@@ -11,6 +11,10 @@ from jlens.vis import compute_slice
 from jlens_readable import build_readable_page
 
 MODEL = "Qwen/Qwen3.5-4B"
+# Pin to an exact commit for reproducibility and supply-chain safety. A tag or
+# branch name (like the lens revision below) pins a NAME, not the bytes; only a
+# commit hash pins the bytes. Leave None to take the repo's current revision.
+MODEL_REVISION = None
 LENS_REPO, LENS_REV = "neuronpedia/jacobian-lens", "qwen-n1000"
 LENS_FILE = "qwen3.5-4b/jlens/Salesforce-wikitext/Qwen3.5-4B_jacobian_lens_n1000.pt"
 DEVICE = "mps"   # "mps" (Apple Silicon) | "cuda" (NVIDIA) | "cpu"
@@ -22,7 +26,11 @@ for name in ("AutoModelForImageTextToText", "AutoModelForCausalLM"):
     if cls is None:
         continue
     try:
-        hf = cls.from_pretrained(MODEL, dtype=torch.bfloat16).to(DEVICE); break
+        # We deliberately do NOT pass trust_remote_code=True: this example does not
+        # need it, and enabling it runs Python straight from the model repo. If a
+        # load fails, do not "fix" it by turning that on.
+        hf = cls.from_pretrained(MODEL, revision=MODEL_REVISION,
+                                 dtype=torch.bfloat16).to(DEVICE); break
     except Exception as e:
         print(name, "failed:", e)
 if hf is None:
@@ -30,6 +38,9 @@ if hf is None:
 
 tok = transformers.AutoTokenizer.from_pretrained(MODEL)
 model = jlens.from_hf(hf, tok)
+# The lens is a .pt file loaded (by jlens) via torch, which uses pickle and can
+# execute code on load. We pin the revision and only load lenses from a source we
+# trust. For stronger guarantees, pin LENS_REV to a commit hash.
 lens = jlens.JacobianLens.from_pretrained(LENS_REPO, filename=LENS_FILE, revision=LENS_REV)
 
 # Pick a prompt and a single-token concept to track. Pin it so compute_slice
