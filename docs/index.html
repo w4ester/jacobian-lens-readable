@@ -24,6 +24,8 @@ code { background: #f2f2f2; padding: 1px 5px; border-radius: 4px; font-size: 13p
 .card { display:block; border:1px solid #e5e5e5; border-radius:10px; padding:15px 18px;
   text-decoration:none; color:inherit; transition:border-color .15s; }
 .card:hover { border-color:#3b5bdb; }
+.card:focus-visible { border-color:#3b5bdb; }
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 .card h3 { margin:0 0 4px; font-size:16px; }
 .card p { margin:0; font-size:14px; color:#666; }
 .credit { margin-top:40px; padding-top:18px; border-top:1px solid #e5e5e5; font-size:13px; color:#666; }
@@ -67,11 +69,11 @@ guess for the <b>next</b> word firms up as it goes deeper, ending in the <b>outp
 actually says). The <b>color</b> of a box is how highly it ranks the tracked concept, darker for higher:
 <div style="margin-top:6px">
 <span class="sw" style="background:#b45309;color:#fff">top choice</span>
-<span class="sw" style="background:#ea580c;color:#fff">top 5</span>
+<span class="sw" style="background:#c2410c;color:#fff">top 5</span>
 <span class="sw" style="background:#f59e0b;color:#111">top 20</span>
 <span class="sw" style="background:#fcd34d;color:#111">top 100</span>
 <span class="sw" style="background:#fef3c7;color:#555">top 1000</span>
-<span class="sw" style="background:#fff;color:#bbb;border:1px solid #ccc">not close</span>
+<span class="sw" style="background:#fff;color:#767676;border:1px solid #767676">not close</span>
 </div>
 </div>
 
@@ -94,10 +96,10 @@ actually says). The <b>color</b> of a box is how highly it ranks the tracked con
     <b>#2</b> internal concept.</p>
   </a>
   <a class="card" href="maryland-human-services.html">
-    <h3>🏛️ AI vs. local facts: where it guesses generic</h3>
-    <p>Asked which Maryland department runs food assistance and foster care, the model leans toward the
-    generic <b>"Social"</b> (Services) rather than Maryland's actual <b>Human Services</b>. A useful
-    lesson in how models pattern-match instead of knowing local specifics.</p>
+    <h3>🏛️ Surface vs. inside: the right idea under a generic word</h3>
+    <p>Asked which Maryland department runs food assistance and foster care, the model's out-loud answer
+    drifts to the generic <b>"Social"</b> Services, but track <b>"Human"</b> and it reaches <b>#1</b>
+    deep inside (layer 30). The right concept is in there, beneath the generic surface word.</p>
   </a>
   <a class="card" href="maryland-mdot-disambiguation.html">
     <h3>🌉 Context binding: Maryland vs. Michigan</h3>

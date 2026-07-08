@@ -1,23 +1,30 @@
 # SPDX-License-Identifier: Apache-2.0
-"""A legible, dependency-free view for Anthropic's Jacobian Lens.
+"""A legible, accessible, dependency-free view for Anthropic's Jacobian Lens.
 
-The upstream repo (https://github.com/anthropics/jacobian-lens) ships one
-visualization: a dense d3 heat-map of one glyph per token. It answers a
-researcher's questions well, but a newcomer or a classroom can't read it.
+The upstream repo ships one visualization: a dense d3 heat-map of one glyph per
+token. It answers a researcher's questions well, but a newcomer or a classroom
+cannot read it, and a screen-reader user cannot use it at all.
 
-This module renders the *same* ``jlens.vis.SliceData`` as a plain HTML table
-you can read at a glance:
+This module renders the *same* ``jlens.vis.SliceData`` as a plain HTML table you
+can read at a glance, and that a screen reader or braille display can read too:
 
   * rows    = the words of the prompt (reading order, top to bottom)
   * columns = the model's layers, left to right, with the real OUTPUT on the right
   * cell    = the top word that (position, layer) leans toward
   * colour  = how highly the cell ranks a concept you choose to track, in six
-              log-spaced buckets (darker = higher)
+              log-spaced buckets (darker = higher). The rank is ALSO printed as
+              text in every meaningful cell, so colour is never the only signal.
 
-It is pure Python (only the standard-library ``html`` module), adds no
-dependencies, uses only the public ``SliceData`` surface, and emits a single
-self-contained HTML string, with no d3 and no JavaScript, e-mailable, works from
-``file://``.
+Accessibility: real table semantics (``<caption>``, ``<thead>``/``<tbody>``,
+``<th scope>``), a plain-language "Key finding" that a blind user hears first, a
+keyboard-focusable scroll region, WCAG-checked contrast, and a ``lang``/``dir``
+aware document. It is pure Python (only the standard-library ``html`` module),
+adds no dependencies, and emits a single self-contained HTML string: no d3, no
+JavaScript, e-mailable, works from ``file://``.
+
+Localization: fixed chrome (labels, callout, legend, how-to-read) flows through
+``UI_STRINGS`` so it can be translated by passing ``lang=`` or ``ui_strings=``.
+The model's own token output is never translated.
 
 The science is entirely Anthropic's: "Verbalizable Representations Form a Global
 Workspace in Language Models" (https://transformer-circuits.pub/2026/workspace).
@@ -34,57 +41,125 @@ _SLICEDATA_FIELDS = (
     "tracked_token_ids", "vocab_fragment", "vocab_size", "ctx_offset",
 )
 
+#: Localizable fixed chrome. Add a language by adding a dict; missing keys fall
+#: back to English. The model's own token output is NEVER taken from here.
+UI_STRINGS = {
+    "en": {
+        "dir": "ltr",
+        "title_tracked": 'Where “{concept}” lights up inside the model',
+        "title_plain": "What the model leans toward, layer by layer",
+        "prompt_label": "Prompt:",
+        "tracking": "tracking: {concept}",
+        "how_to_read": (
+            'Each <b>row</b> is one word of the prompt. Reading a row '
+            '<b>left to right</b> shows how the model’s guess for the '
+            '<b>next</b> word firms up as it goes deeper, ending in the '
+            '<b>output</b> column (what it actually says).'),
+        "rule_tracked": ('The <b>color</b> of a box is how high it ranks '
+                         '“{concept}” there, and the box also prints that '
+                         'rank as a number: <b>darker and lower numbers mean higher</b>.'),
+        "rule_plain": "Each box shows the top word that spot leans toward.",
+        "key_finding": "Key finding:",
+        "callout_tracked": (
+            'on the row for <b>“{word}”</b>, deep in the model (layer {layer}), '
+            '“{concept}” is the model’s <b>#{rank}</b> pick out of {vocab} '
+            'words, though the prompt never says it. The model has worked out the answer '
+            'before writing a thing. In the table below, that box has a blue outline and '
+            'is labelled "peak".'),
+        "callout_plain": ('Showing the top word per cell only ({why}), so there is no '
+                          'concept heat-map. Pass a single-token concept to see where it '
+                          'lights up.'),
+        "not_tracked": '“{concept}” is not tracked',
+        "no_concept": "no concept given",
+        "legend_label": 'how high “{concept}” ranks in a box:',
+        "legend": ["top choice", "top 5", "top 20", "top 100", "top 1000", "not close"],
+        "caption": ('Top word at each layer for each prompt word. Where the tracked '
+                    'concept is in the top 1000 at a spot, the cell also shows its rank. '
+                    'Rows are prompt words, columns are model layers, and the output '
+                    'column is what the model actually says.'),
+        "corner": "prompt word",
+        "col_layer": "layer {n}",
+        "col_output": "output",
+        "region_label": "rank table, scrollable, use arrow keys",
+        "peak_sr": "peak: the highest rank for the tracked concept on this page",
+        "newline_sr": "(newline)",
+        "footer": "{model} · {shown} of {total} layers · {tokens} tokens",
+    },
+}
+
+#: (background, text) for each rank bucket, WCAG-checked against its text colour.
+_BUCKETS = [
+    ("#b45309", "#ffffff"),  # rank 0, top choice
+    ("#c2410c", "#ffffff"),  # <= 4, top 5   (darkened from #ea580c for 4.5:1)
+    ("#f59e0b", "#111111"),  # <= 19, top 20
+    ("#fcd34d", "#111111"),  # <= 99, top 100
+    ("#fef3c7", "#555555"),  # <= 999, top 1000
+    ("#ffffff", "#767676"),  # else, not close (grey passes 4.5:1 on white)
+]
+
 
 def _clean(s: str, cap: int = 12) -> str:
-    """Trim, escape, and cap a token string for display (newline -> ⏎)."""
-    s = s.replace("\n", "⏎").strip()
+    """Trim, escape, and cap a token string for display (newline -> ⏎ marker)."""
+    nl = "⏎"  # ⏎
+    s = s.replace("\n", nl).strip()
     if len(s) > cap:
         s = s[:cap] + "…"
-    return html.escape(s) if s else "·"
+    if not s:
+        return "·"
+    esc = html.escape(s)
+    if nl in esc:  # give the newline glyph an accessible name
+        esc = esc.replace(nl, f'<span aria-hidden="true">{nl}</span>'
+                              f'<span class="sr-only"> (newline) </span>')
+    return esc
 
 
-def _color(rank: int) -> tuple[str, str]:
-    """Map a 0-indexed rank (0 == the model's #1 guess) to (background, text)."""
-    if rank < 0:      return "#ffffff", "#ccc"   # concept absent from this cell
-    if rank == 0:     return "#b45309", "#fff"   # top choice
-    if rank <= 4:     return "#ea580c", "#fff"   # top 5
-    if rank <= 19:    return "#f59e0b", "#111"   # top 20
-    if rank <= 99:    return "#fcd34d", "#111"   # top 100
-    if rank <= 999:   return "#fef3c7", "#555"   # top 1000
-    return "#ffffff", "#ccc"                      # not close
+def _bucket(rank: int) -> int:
+    """0-indexed rank -> bucket index into _BUCKETS."""
+    if rank < 0:     return 5
+    if rank == 0:    return 0
+    if rank <= 4:    return 1
+    if rank <= 19:   return 2
+    if rank <= 99:   return 3
+    if rank <= 999:  return 4
+    return 5
 
 
-_LEGEND = "".join(
-    f'<span class="lg" style="background:{b};color:{t}">{lab}</span>'
-    for b, t, lab in [
-        ("#b45309", "#fff", "top choice"), ("#ea580c", "#fff", "top 5"),
-        ("#f59e0b", "#111", "top 20"), ("#fcd34d", "#111", "top 100"),
-        ("#fef3c7", "#555", "top 1000"), ("#fff", "#bbb", "not close"),
-    ]
-)
+def _legend(labels) -> str:
+    return "".join(
+        f'<span class="lg" style="background:{bg};color:{fg}'
+        f'{";border:1px solid #767676" if bg == "#ffffff" else ""}">{html.escape(lab)}</span>'
+        for (bg, fg), lab in zip(_BUCKETS, labels)
+    )
+
 
 _CSS = """
 body{font-family:-apple-system,Helvetica,Arial,sans-serif;margin:22px;color:#111}
+main{display:block}
 h1{font-size:20px;margin:0 0 6px}
-.sub{color:#444;font-size:13px;margin:0 0 10px;max-width:940px;line-height:1.55}
+.sub{color:#3f3f3f;font-size:13px;margin:0 0 10px;max-width:940px;line-height:1.55}
 .chip{display:inline-block;background:#b45309;color:#fff;font-size:12px;font-weight:600;padding:2px 9px;border-radius:11px}
-.key{font-size:14px;background:#fff7ed;border-left:4px solid #ea580c;padding:9px 13px;margin:11px 0;max-width:940px;line-height:1.5}
-.note{font-size:13px;background:#f3f4f6;border-left:4px solid #9ca3af;padding:8px 12px;margin:11px 0;max-width:940px}
-.legend{margin:9px 0;font-size:12px;color:#555} .lg{display:inline-block;padding:2px 8px;margin:0 4px 4px 0;border-radius:4px;border:1px solid #eee}
-.fine{color:#888;font-size:11px;margin-top:8px} .fine a{color:#3b5bdb}
-.wrap{overflow:auto;border:1px solid #e5e5e5;max-height:78vh}
+.key{font-size:14px;background:#fff7ed;border-left:4px solid #c2410c;padding:9px 13px;margin:11px 0;max-width:940px;line-height:1.5}
+.note{font-size:13px;background:#f3f4f6;border-left:4px solid #6b7280;padding:8px 12px;margin:11px 0;max-width:940px}
+.legend{margin:9px 0;font-size:12px;color:#3f3f3f} .lg{display:inline-block;padding:2px 8px;margin:0 4px 4px 0;border-radius:4px}
+.fine{color:#6b7280;font-size:11px;margin-top:8px} .fine a{color:#3b5bdb}
+.wrap{overflow:auto;border:1px solid #d1d5db;max-height:78vh}
+.wrap:focus-visible{outline:3px solid #1e40af;outline-offset:2px}
 table{border-collapse:collapse;font-size:12px}
-th,td{border:1px solid #eee}
-.corner{font-size:10px;color:#999;font-weight:normal;padding:4px 6px;position:sticky;left:0;top:0;z-index:3;background:#fafafa}
-.lyr{font-size:11px;color:#666;font-weight:normal;padding:5px 7px;background:#fafafa;position:sticky;top:0;z-index:2;text-align:center}
-.lyr.out{color:#111;font-weight:bold;border-left:2px solid #999}
-.tok{font-family:ui-monospace,Menlo,monospace;font-size:11px;padding:4px 8px;background:#fafafa;position:sticky;left:0;z-index:1;white-space:nowrap;text-align:left}
-.tok.tgt{background:#3b5bdb;color:#fff} .tok .pn{color:#bbb;margin-right:6px;font-size:10px} .tok.tgt .pn{color:#cdd6ff}
+caption{text-align:left}
+th,td{border:1px solid #e5e5e5}
+.corner{font-size:11px;color:#6b7280;font-weight:normal;padding:4px 6px;position:sticky;left:0;top:0;z-index:3;background:#f3f4f6;text-align:left}
+.lyr{font-size:11px;color:#4b5563;font-weight:normal;padding:5px 7px;background:#f3f4f6;position:sticky;top:0;z-index:2;text-align:center}
+.lyr.out{color:#111;font-weight:bold;border-left:2px solid #6b7280}
+.tok{font-family:ui-monospace,Menlo,monospace;font-size:11px;padding:4px 8px;background:#f3f4f6;position:sticky;left:0;z-index:1;white-space:nowrap;text-align:left;font-weight:normal}
+.tok.tgt{background:#1e40af;color:#fff} .tok .pn{color:#9ca3af;margin-right:6px;font-size:10px} .tok.tgt .pn{color:#c7d2fe}
 .cell{min-width:56px;max-width:96px;height:32px;padding:2px 4px;text-align:center;vertical-align:middle}
-.cell.out{border-left:2px solid #999}
+.cell.out{border-left:2px solid #6b7280}
 .cell .w{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1}
-.cell .sup{display:block;font-size:9px;font-weight:400;opacity:.9;line-height:1}
+.cell .sup{display:block;font-size:10px;font-weight:400;opacity:.95;line-height:1}
 .cell.peak{outline:3px solid #1e40af;outline-offset:-3px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+@media (forced-colors: active){.lg{forced-color-adjust:none} .cell.peak,.tok.tgt{outline:3px solid Highlight}}
 """
 
 _CREDIT = (
@@ -104,8 +179,10 @@ def build_readable_page(
     concept_id: int | None = None,
     model_name: str = "the model",
     layer_step: int = 1,
+    lang: str = "en",
+    ui_strings: dict | None = None,
 ) -> str:
-    """Render a ``jlens.vis.SliceData`` into a self-contained readable HTML page.
+    """Render a ``jlens.vis.SliceData`` into a self-contained, accessible HTML page.
 
     Args:
         slice_data: A ``SliceData`` from ``jlens.vis.compute_slice``.
@@ -114,16 +191,21 @@ def build_readable_page(
         concept: A word to track and colour by (e.g. ``"Italy"``). When empty or
             untracked, the page renders the top word per cell without a heat-map.
         concept_id: The token id of ``concept``. It must be in
-            ``slice_data.tracked_token_ids`` for the colouring to appear; pass
-            it to ``compute_slice`` via ``pinned_token_ids`` to guarantee that.
+            ``slice_data.tracked_token_ids`` for the colouring to appear; pass it
+            to ``compute_slice`` via ``pinned_token_ids`` to guarantee that.
         model_name: Display label for the model (e.g. ``"Qwen3.5-4B"``).
         layer_step: Render every Nth layer to keep columns on one screen; the
             final layer and the concept's peak layer are always included.
+        lang: BCP-47 code for the fixed chrome (``"en"``, ``"es"``, ...). Sets the
+            document ``lang``/``dir`` and picks a ``UI_STRINGS`` entry.
+        ui_strings: Optional per-call overrides merged on top of the language dict.
 
     Returns:
         A single self-contained HTML document as a string (no JS, no assets).
     """
     sd = slice_data
+    s = {**UI_STRINGS["en"], **UI_STRINGS.get(lang, {}), **(ui_strings or {})}
+    esc_concept = html.escape(concept)
     final = n_layers - 1
     vocab = {int(k): v for k, v in sd.vocab_fragment.items()}
     tracked = concept_id is not None and concept_id in sd.tracked_token_ids
@@ -148,68 +230,83 @@ def build_readable_page(
         col_lis.append(best[1])
     col_lis = sorted(set(col_lis))
 
-    head = ['<th class="corner">word ⬎ &nbsp; layer →</th>']
+    # --- table head: real column headers with scope + screen-reader layer names
+    head = [f'<th class="corner" scope="col">{html.escape(s["corner"])}</th>']
     for li in col_lis:
         layer = sd.layers[li]
-        out = layer == final
-        head.append(f'<th class="lyr{" out" if out else ""}">'
-                    f'{"output" if out else "L" + str(layer)}</th>')
-    header_row = f"<tr>{''.join(head)}</tr>"
+        if layer == final:
+            head.append(f'<th class="lyr out" scope="col">{html.escape(s["col_output"])}</th>')
+        else:
+            head.append(f'<th class="lyr" scope="col"><span aria-hidden="true">L{layer}</span>'
+                        f'<span class="sr-only">{html.escape(s["col_layer"].format(n=layer))}</span></th>')
+    thead = f'<thead><tr>{"".join(head)}</tr></thead>'
 
+    # --- table body
     rows = []
     for pos in range(sd.seq_len):
         tgt = bool(best) and pos == best[2]
         tok = _clean(sd.context_token_strs[sd.ctx_offset + pos], cap=16)
-        cells = [f'<th class="tok{" tgt" if tgt else ""}">'
-                 f'<span class="pn">{sd.ctx_offset + pos}</span>{tok}</th>']
+        cells = [f'<th class="tok{" tgt" if tgt else ""}" scope="row">'
+                 f'<span class="pn" aria-hidden="true">{sd.ctx_offset + pos}</span>{tok}</th>']
         for li in col_lis:
             tid = int(sd.top_ids[pos, li, 0])
             word = _clean(vocab.get(tid, "?"))
             rank = rank_at(pos, li)
-            bg, fg = _color(rank)
-            sup = f'<span class="sup">#{rank + 1}</span>' if 1 <= rank <= 99 else ""
+            bg, fg = _BUCKETS[_bucket(rank)]
+            # rank as TEXT in every meaningful cell (0..999), so colour is never
+            # the only signal (colourblind, grayscale, braille, forced-colors).
+            sup = f'<span class="sup">#{rank + 1}</span>' if 0 <= rank <= 999 else ""
             peak = bool(best) and li == best[1] and pos == best[2]
+            peak_sr = f'<span class="sr-only">{html.escape(s["peak_sr"])}</span>' if peak else ""
             cls = "cell" + (" peak" if peak else "") + (" out" if sd.layers[li] == final else "")
             cells.append(f'<td class="{cls}" style="background:{bg};color:{fg}">'
-                         f'<span class="w">{word}</span>{sup}</td>')
+                         f'<span class="w">{word}</span>{sup}{peak_sr}</td>')
         rows.append(f"<tr>{''.join(cells)}</tr>")
+    tbody = f'<tbody>{"".join(rows)}</tbody>'
 
     vocab_n = f"{sd.vocab_size:,}" if sd.vocab_size else "the vocabulary"
+
+    # --- headline text: a blind user should hear the finding first, as a finding
     if tracked and best:
         best_tok = _clean(sd.context_token_strs[sd.ctx_offset + best[2]])
-        title = f"Where &ldquo;{html.escape(concept)}&rdquo; lights up inside the model"
-        chip = f'<span class="chip">tracking: {html.escape(concept)}</span>&nbsp; '
-        rule = (f'The <b>color</b> of a box is how high it ranks '
-                f'&ldquo;{html.escape(concept)}&rdquo; there: <b>darker = higher</b>.')
-        callout = (f'<div class="key">&#128161; Find the <b>blue-outlined box</b>: on the row for '
-                   f'<b>&ldquo;{best_tok}&rdquo;</b>, deep in the model (layer {sd.layers[best[1]]}), '
-                   f'&ldquo;{html.escape(concept)}&rdquo; is the model&rsquo;s <b>#{best[0] + 1}</b> pick '
-                   f'out of {vocab_n} words, though the prompt never says it. The model has '
-                   f'worked out the answer before writing a thing.</div>'
-                   f'<div class="legend">how high &ldquo;{html.escape(concept)}&rdquo; ranks in a box:'
-                   f'&nbsp; {_LEGEND}</div>')
+        title = s["title_tracked"].format(concept=esc_concept)
+        chip = f'<span class="chip">{html.escape(s["tracking"].format(concept=concept))}</span>&nbsp; '
+        rule = s["rule_tracked"].format(concept=esc_concept)
+        key = (f'<p class="key"><span aria-hidden="true">&#128161;</span> '
+               f'<b>{html.escape(s["key_finding"])}</b> '
+               + s["callout_tracked"].format(word=best_tok, layer=sd.layers[best[1]],
+                                              concept=esc_concept, rank=best[0] + 1, vocab=vocab_n)
+               + '</p>')
+        legend = (f'<div class="legend">{html.escape(s["legend_label"].format(concept=concept))}'
+                  f'&nbsp; {_legend(s["legend"])}</div>')
     else:
-        why = (f'&ldquo;{html.escape(concept)}&rdquo; is not tracked'
-               if concept.strip() else 'no concept given')
-        title = "What the model leans toward, layer by layer"
+        why = (s["not_tracked"].format(concept=esc_concept)
+               if concept.strip() else s["no_concept"])
+        title = s["title_plain"]
         chip = ""
-        rule = 'Each box shows the top word that spot leans toward.'
-        callout = (f'<div class="note">Showing the top word per cell only ({why}, so there&rsquo;s '
-                   f'no concept heat-map). Pass a single-token concept to see where it lights up.</div>')
+        rule = s["rule_plain"]
+        key = f'<p class="note">{s["callout_plain"].format(why=why)}</p>'
+        legend = ""
+
+    caption = f'<caption class="sr-only">{html.escape(s["caption"])}</caption>'
+    region = html.escape(s["region_label"])
+    footer = html.escape(s["footer"].format(
+        model=model_name, shown=len(col_lis), total=sd.layers[-1] + 1, tokens=sd.seq_len))
 
     return (
-        f'<!doctype html><html><head><meta charset="utf-8">'
-        f'<title>Readable J-lens{": " + html.escape(concept) if tracked else ""}</title>'
-        f'<style>{_CSS}</style></head><body>'
+        f'<!doctype html><html lang="{html.escape(lang)}" dir="{html.escape(s["dir"])}">'
+        f'<head><meta charset="utf-8">'
+        f'<meta name="viewport" content="width=device-width, initial-scale=1">'
+        f'<title>Readable J-lens{": " + esc_concept if tracked else ""}</title>'
+        f'<style>{_CSS}</style></head><body><main>'
         f'<h1>{title}</h1>'
-        f'<p class="sub"><b>Prompt:</b> <code>{_clean(prompt, cap=240)}</code><br>'
-        f'{chip}Each <b>row</b> is one word of the prompt. Reading a row '
-        f'<b>left&nbsp;&rarr;&nbsp;right</b> shows how the model&rsquo;s guess for the '
-        f'<b>next</b> word firms up as it goes deeper, ending in the <b>output</b> column '
-        f'(what it actually says). {rule}</p>'
-        f'{callout}'
-        f'<div class="wrap"><table>{header_row}{"".join(rows)}</table></div>'
-        f'<p class="fine">{html.escape(model_name)} · {len(col_lis)} of {sd.layers[-1] + 1} '
-        f'layers · {sd.seq_len} tokens<br>{_CREDIT}</p>'
-        f'</body></html>'
+        f'{key}'
+        f'<p class="sub"><b>{html.escape(s["prompt_label"])}</b> '
+        f'<code translate="no">{_clean(prompt, cap=240)}</code><br>'
+        f'{chip}{s["how_to_read"]} {rule}</p>'
+        f'{legend}'
+        f'<div class="wrap" role="region" aria-label="{region}" tabindex="0">'
+        f'<table translate="no">{caption}{thead}{tbody}</table></div>'
+        f'<p class="fine">{footer}<br>{_CREDIT}</p>'
+        f'</main></body></html>'
     )
