@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""A legible, accessible, dependency-free view for Anthropic's Jacobian Lens.
+"""A legible, accessible, multilingual, dependency-free view for the Jacobian Lens.
 
 The upstream repo ships one visualization: a dense d3 heat-map of one glyph per
 token. It answers a researcher's questions well, but a newcomer or a classroom
@@ -23,8 +23,8 @@ adds no dependencies, and emits a single self-contained HTML string: no d3, no
 JavaScript, e-mailable, works from ``file://``.
 
 Localization: fixed chrome (labels, callout, legend, how-to-read) flows through
-``UI_STRINGS`` so it can be translated by passing ``lang=`` or ``ui_strings=``.
-The model's own token output is never translated.
+``UI_STRINGS`` (see ``strings.py``) so it can be translated by passing ``lang=``
+or ``ui_strings=``. The model's own token output is never translated.
 
 The science is entirely Anthropic's: "Verbalizable Representations Form a Global
 Workspace in Language Models" (https://transformer-circuits.pub/2026/workspace).
@@ -34,58 +34,14 @@ from __future__ import annotations
 
 import html
 
+from jlens_readable.strings import UI_STRINGS
+
 #: The ``SliceData`` fields this renderer reads. Upstream is a frozen reference
 #: implementation, so this is effectively a stable contract.
 _SLICEDATA_FIELDS = (
     "seq_len", "layers", "context_token_strs", "top_ids", "rank_tensor",
     "tracked_token_ids", "vocab_fragment", "vocab_size", "ctx_offset",
 )
-
-#: Localizable fixed chrome. Add a language by adding a dict; missing keys fall
-#: back to English. The model's own token output is NEVER taken from here.
-UI_STRINGS = {
-    "en": {
-        "dir": "ltr",
-        "title_tracked": 'Where “{concept}” lights up inside the model',
-        "title_plain": "What the model leans toward, layer by layer",
-        "prompt_label": "Prompt:",
-        "tracking": "tracking: {concept}",
-        "how_to_read": (
-            'Each <b>row</b> is one word of the prompt. Reading a row '
-            '<b>left to right</b> shows how the model’s guess for the '
-            '<b>next</b> word firms up as it goes deeper, ending in the '
-            '<b>output</b> column (what it actually says).'),
-        "rule_tracked": ('The <b>color</b> of a box is how high it ranks '
-                         '“{concept}” there, and the box also prints that '
-                         'rank as a number: <b>darker and lower numbers mean higher</b>.'),
-        "rule_plain": "Each box shows the top word that spot leans toward.",
-        "key_finding": "Key finding:",
-        "callout_tracked": (
-            'on the row for <b>“{word}”</b>, deep in the model (layer {layer}), '
-            '“{concept}” is the model’s <b>#{rank}</b> pick out of {vocab} '
-            'words, though the prompt never says it. The model has worked out the answer '
-            'before writing a thing. In the table below, that box has a blue outline and '
-            'is labelled "peak".'),
-        "callout_plain": ('Showing the top word per cell only ({why}), so there is no '
-                          'concept heat-map. Pass a single-token concept to see where it '
-                          'lights up.'),
-        "not_tracked": '“{concept}” is not tracked',
-        "no_concept": "no concept given",
-        "legend_label": 'how high “{concept}” ranks in a box:',
-        "legend": ["top choice", "top 5", "top 20", "top 100", "top 1000", "not close"],
-        "caption": ('Top word at each layer for each prompt word. Where the tracked '
-                    'concept is in the top 1000 at a spot, the cell also shows its rank. '
-                    'Rows are prompt words, columns are model layers, and the output '
-                    'column is what the model actually says.'),
-        "corner": "prompt word",
-        "col_layer": "layer {n}",
-        "col_output": "output",
-        "region_label": "rank table, scrollable, use arrow keys",
-        "peak_sr": "peak: the highest rank for the tracked concept on this page",
-        "newline_sr": "(newline)",
-        "footer": "{model} · {shown} of {total} layers · {tokens} tokens",
-    },
-}
 
 #: (background, text) for each rank bucket, WCAG-checked against its text colour.
 _BUCKETS = [
@@ -100,7 +56,7 @@ _BUCKETS = [
 
 def _clean(s: str, cap: int = 12) -> str:
     """Trim, escape, and cap a token string for display (newline -> ⏎ marker)."""
-    nl = "⏎"  # ⏎
+    nl = "⏎"
     s = s.replace("\n", nl).strip()
     if len(s) > cap:
         s = s[:cap] + "…"
@@ -136,6 +92,8 @@ _CSS = """
 body{font-family:-apple-system,Helvetica,Arial,sans-serif;margin:22px;color:#111}
 main{display:block}
 h1{font-size:20px;margin:0 0 6px}
+.langnav{font-size:12px;margin:0 0 10px;color:#6b7280}
+.langnav a{color:#3b5bdb} .langnav a:focus-visible{outline:2px solid #1e40af;outline-offset:2px}
 .sub{color:#3f3f3f;font-size:13px;margin:0 0 10px;max-width:940px;line-height:1.55}
 .chip{display:inline-block;background:#b45309;color:#fff;font-size:12px;font-weight:600;padding:2px 9px;border-radius:11px}
 .key{font-size:14px;background:#fff7ed;border-left:4px solid #c2410c;padding:9px 13px;margin:11px 0;max-width:940px;line-height:1.5}
@@ -181,6 +139,7 @@ def build_readable_page(
     layer_step: int = 1,
     lang: str = "en",
     ui_strings: dict | None = None,
+    alt_langs: list | None = None,
 ) -> str:
     """Render a ``jlens.vis.SliceData`` into a self-contained, accessible HTML page.
 
@@ -199,6 +158,8 @@ def build_readable_page(
         lang: BCP-47 code for the fixed chrome (``"en"``, ``"es"``, ...). Sets the
             document ``lang``/``dir`` and picks a ``UI_STRINGS`` entry.
         ui_strings: Optional per-call overrides merged on top of the language dict.
+        alt_langs: Optional list of ``(code, label, href)`` for a language switcher
+            nav. The entry whose code == ``lang`` renders as bold, others as links.
 
     Returns:
         A single self-contained HTML document as a string (no JS, no assets).
@@ -288,6 +249,18 @@ def build_readable_page(
         key = f'<p class="note">{s["callout_plain"].format(why=why)}</p>'
         legend = ""
 
+    # --- optional language switcher nav
+    nav = ""
+    if alt_langs:
+        parts = []
+        for code, label, href in alt_langs:
+            if code == lang:
+                parts.append(f'<b lang="{html.escape(code)}">{html.escape(label)}</b>')
+            else:
+                parts.append(f'<a lang="{html.escape(code)}" href="{html.escape(href)}">{html.escape(label)}</a>')
+        nav = (f'<nav class="langnav" aria-label="{html.escape(s["lang_nav"])}">'
+               + " · ".join(parts) + "</nav>")
+
     caption = f'<caption class="sr-only">{html.escape(s["caption"])}</caption>'
     region = html.escape(s["region_label"])
     footer = html.escape(s["footer"].format(
@@ -299,6 +272,7 @@ def build_readable_page(
         f'<meta name="viewport" content="width=device-width, initial-scale=1">'
         f'<title>Readable J-lens{": " + esc_concept if tracked else ""}</title>'
         f'<style>{_CSS}</style></head><body><main>'
+        f'{nav}'
         f'<h1>{title}</h1>'
         f'{key}'
         f'<p class="sub"><b>{html.escape(s["prompt_label"])}</b> '

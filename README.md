@@ -157,6 +157,20 @@ graph, and how a careful assistant behaves. I want to understand what the model 
 am using is actually doing.
 ```
 
+## Other languages
+
+The demos and the copy-paste prompts are available in more than English. The graphs are localized
+(the model's own words stay as-is; the labels, legend, and callout are translated), and each localized
+prompt tells the assistant to guide you in that language.
+
+- Español: [demos](https://w4ester.github.io/jacobian-lens-readable/es/) &middot; [prompts](prompts/es.md)
+- Français: [demos](https://w4ester.github.io/jacobian-lens-readable/fr/) &middot; [prompts](prompts/fr.md)
+- 中文 (Chinese, Simplified): [demos](https://w4ester.github.io/jacobian-lens-readable/zh/) &middot; [prompts](prompts/zh.md)
+- አማርኛ (Amharic): [demos](https://w4ester.github.io/jacobian-lens-readable/am/) &middot; [prompts](prompts/am.md)
+
+Translations are best-effort and welcome correction (fork and fix). Adding a language is one dict in
+[`jlens_readable/strings.py`](jlens_readable/strings.py) plus a rebuild with `scripts/build_demos.py`.
+
 ## How to read the tables
 
 Each **row** is one word of the prompt. Reading a row **left to right** shows how the model's
