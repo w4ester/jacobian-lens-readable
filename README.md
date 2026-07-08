@@ -202,6 +202,30 @@ open("slice.html", "w").write(html)   # self-contained, no JS, e-mailable
 
 See [`example.py`](example.py) for a complete runnable script using the public Qwen3.5-4B lens.
 
+## Make your own example
+
+Everything in a demo comes from two choices: the **prompt** and the single **concept** you track. To
+make your own, copy `example.py` and change these two lines:
+
+```python
+prompt  = "Your prompt here. The model predicts the NEXT word after this."
+concept = "Word"    # a single word you expect the model to be leaning toward
+```
+
+Rules of thumb:
+
+- The concept should be **one token**. `example.py` resolves `" " + concept` to a token id and only
+  tracks it if it is a single token; otherwise the page renders top-words-only with a note.
+- The strongest examples track a concept the prompt **implies but never says** (like `Italy` for "the
+  country shaped like a boot"), not a word already in the prompt.
+- Open the page and read across the rows to find where your concept's color gets darkest. If it never
+  lights up, the model may not represent it there, which is itself a finding.
+- The lens works on **non-English prompts** too (upstream ships a multilingual evaluation set), so a
+  Spanish or French prompt is a perfectly good example.
+
+The bundled demos come from Anthropic's `jlens.examples.EXAMPLES` list; `import jlens.examples` to see
+them all, or just write your own prompt as above.
+
 ## The `SliceData` contract
 
 Upstream is a frozen reference implementation, which is an advantage: the fields this renderer
