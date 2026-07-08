@@ -36,8 +36,9 @@ You do not have to write any code. Copy the prompt below, keep the one line that
 computer, and paste it into whichever large model you already use as an assistant. It will
 install everything and run the first example for you.
 
-**Works with any of these three assistants:** **Claude** (Claude Code, or claude.ai) &middot;
-**ChatGPT** (GPT-5.5, or the Codex CLI) &middot; **Google Gemini**.
+**Works with whatever AI assistant you already use** (yes, including Claude, ChatGPT, and Gemini,
+lol). No code needed, because around here **AI** is also meant to stand for *accessible intelligence*.
+Claude works as Claude Code or claude.ai, ChatGPT as GPT-5.5 or the Codex CLI, and Gemini in the app.
 
 ```text
 I want to watch the concepts a language model lines up in its head just before it
