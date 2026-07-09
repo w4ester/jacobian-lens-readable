@@ -22,7 +22,8 @@ UI_STRINGS = {
         "how_to_read": ('Each <b>row</b> is one word of the prompt. Reading a row '
                         '<b>left to right</b> shows how the model’s guess for the '
                         '<b>next</b> word firms up as it goes deeper, ending in the '
-                        '<b>output</b> column (what it actually says).'),
+                        '<b>output</b> column (what it actually says). The boxes show the '
+                        'model’s own words, so they sometimes appear in another language.'),
         "rule_tracked": ('The <b>color</b> of a box is how high it ranks “{concept}” '
                          'there, and the box also prints that rank as a number: '
                          '<b>darker and lower numbers mean higher</b>.'),
@@ -46,6 +47,7 @@ UI_STRINGS = {
         "col_layer": "layer {n}",
         "col_output": "output",
         "region_label": "rank table, scrollable, use arrow keys",
+        "peak_label": "peak",
         "peak_sr": "peak: the highest rank for the tracked concept on this page",
         "footer": "{model} · {shown} of {total} layers · {tokens} tokens",
     },
@@ -59,7 +61,8 @@ UI_STRINGS = {
         "how_to_read": ('Cada <b>fila</b> es una palabra de la instrucción. Leer una fila de '
                         '<b>izquierda a derecha</b> muestra cómo la predicción del modelo para la '
                         '<b>siguiente</b> palabra se afianza a medida que profundiza, terminando en '
-                        'la columna de <b>salida</b> (lo que realmente dice).'),
+                        'la columna de <b>salida</b> (lo que realmente dice). Las casillas muestran '
+                        'las propias palabras del modelo, por eso a veces aparecen en otro idioma.'),
         "rule_tracked": ('El <b>color</b> de un recuadro indica qué tan alto clasifica “{concept}” '
                          'ahí, y el recuadro también muestra ese rango como número: '
                          '<b>más oscuro y números más bajos significan más alto</b>.'),
@@ -84,8 +87,10 @@ UI_STRINGS = {
         "col_layer": "capa {n}",
         "col_output": "salida",
         "region_label": "tabla de rangos, desplazable, usa las flechas del teclado",
+        "peak_label": "pico",
         "peak_sr": "pico: el rango más alto del concepto seguido en esta página",
         "footer": "{model} · {shown} de {total} capas · {tokens} tokens",
+        "translation_note": "La traducción es preliminar; se agradecen correcciones.",
     },
     "fr": {
         "dir": "ltr",
@@ -97,7 +102,8 @@ UI_STRINGS = {
         "how_to_read": ('Chaque <b>ligne</b> est un mot de l’invite. Lire une ligne de '
                         '<b>gauche à droite</b> montre comment la prédiction du modèle pour le '
                         '<b>prochain</b> mot se précise à mesure qu’il approfondit, pour finir dans '
-                        'la colonne de <b>sortie</b> (ce qu’il dit réellement).'),
+                        'la colonne de <b>sortie</b> (ce qu’il dit réellement). Les cases montrent '
+                        'les mots du modèle lui-même, ils apparaissent donc parfois dans une autre langue.'),
         "rule_tracked": ('La <b>couleur</b> d’une case indique à quel point elle classe “{concept}” '
                          'à cet endroit, et la case affiche aussi ce rang sous forme de nombre : '
                          '<b>plus foncé et des nombres plus bas signifient plus haut</b>.'),
@@ -123,8 +129,10 @@ UI_STRINGS = {
         "col_layer": "couche {n}",
         "col_output": "sortie",
         "region_label": "tableau des rangs, défilable, utilisez les flèches du clavier",
+        "peak_label": "pic",
         "peak_sr": "pic : le rang le plus élevé du concept suivi sur cette page",
         "footer": "{model} · {shown} sur {total} couches · {tokens} tokens",
+        "translation_note": "La traduction est préliminaire ; les corrections sont bienvenues.",
     },
     "zh": {
         "dir": "ltr",
@@ -135,7 +143,7 @@ UI_STRINGS = {
         "tracking": "正在追踪：{concept}",
         "how_to_read": ('每一<b>行</b>是提示词中的一个词。<b>从左到右</b>阅读一行，可以看到模型对'
                         '<b>下一个</b>词的预测如何随着层数加深而逐渐确定，最终落在<b>输出</b>列'
-                        '（模型实际说出的内容）。'),
+                        '（模型实际说出的内容）。方格里显示的是模型自己的词，所以有时会出现其他语言。'),
         "rule_tracked": ('方格的<b>颜色</b>表示它在该处对“{concept}”的排名有多高，方格还会以数字显示该排名：'
                          '<b>颜色越深、数字越小表示排名越高</b>。'),
         "rule_plain": "每个方格显示该处最倾向的词。",
@@ -155,8 +163,10 @@ UI_STRINGS = {
         "col_layer": "第 {n} 层",
         "col_output": "输出",
         "region_label": "排名表，可滚动，使用方向键",
+        "peak_label": "峰值",
         "peak_sr": "峰值：本页中被追踪概念的最高排名",
         "footer": "{model} · {total} 层中的 {shown} 层 · {tokens} 个 token",
+        "translation_note": "翻译为初步版本，欢迎提交更正。",
     },
     "am": {
         "dir": "ltr",
@@ -167,7 +177,8 @@ UI_STRINGS = {
         "tracking": "በመከታተል ላይ፦ {concept}",
         "how_to_read": ('እያንዳንዱ <b>ረድፍ</b> የጥያቄው አንድ ቃል ነው። አንድ ረድፍ <b>ከግራ ወደ ቀኝ</b> ማንበብ ሞዴሉ '
                         'ለ<b>ቀጣዩ</b> ቃል የሚሰጠው ግምት ወደ ጥልቀት ሲሄድ እንዴት እየጠነከረ እንደሚሄድ ያሳያል፣ በመጨረሻም '
-                        'በ<b>ውጤት</b> አምድ ላይ ይደርሳል (ሞዴሉ በትክክል የሚናገረው)።'),
+                        'በ<b>ውጤት</b> አምድ ላይ ይደርሳል (ሞዴሉ በትክክል የሚናገረው)። ሳጥኖቹ የሞዴሉን የራሱን ቃላት '
+                        'ያሳያሉ፣ ስለዚህ አንዳንድ ጊዜ በሌላ ቋንቋ ሊታዩ ይችላሉ።'),
         "rule_tracked": ('የአንድ ሳጥን <b>ቀለም</b> እዚያ ቦታ “{concept}”ን ምን ያህል ከፍ አድርጎ እንደሚያስቀምጠው ያሳያል፣ '
                          'ሳጥኑም ያንን ደረጃ በቁጥር ያሳያል፦ <b>ጠቆር ያለና ዝቅተኛ ቁጥር ማለት ከፍ ያለ ማለት ነው</b>።'),
         "rule_plain": "እያንዳንዱ ሳጥን ያ ቦታ ወደሚያዘነብልበት ዋና ቃል ያሳያል።",
@@ -189,8 +200,10 @@ UI_STRINGS = {
         "col_layer": "ንብርብር {n}",
         "col_output": "ውጤት",
         "region_label": "የደረጃ ሠንጠረዥ፣ ማንሸራተት ይቻላል፣ የቁልፍ ሰሌዳ ቀስቶችን ተጠቀም",
+        "peak_label": "ጫፍ",
         "peak_sr": "ጫፍ፦ በዚህ ገጽ ላይ የተከታተለው ፅንሰ-ሐሳብ ከፍተኛ ደረጃ",
         "footer": "{model} · ከ{total} ንብርብሮች {shown} · {tokens} tokens",
+        "translation_note": "ትርጉሙ የመጀመሪያ ደረጃ ነው፤ እርማቶች እንኳን ደህና መጡ።",
     },
 }
 

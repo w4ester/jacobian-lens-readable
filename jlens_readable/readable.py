@@ -105,19 +105,20 @@ h1{font-size:20px;margin:0 0 6px}
 table{border-collapse:collapse;font-size:12px}
 caption{text-align:left}
 th,td{border:1px solid #e5e5e5}
-.corner{font-size:11px;color:#6b7280;font-weight:normal;padding:4px 6px;position:sticky;left:0;top:0;z-index:3;background:#f3f4f6;text-align:left}
+.corner{font-size:11px;color:#4b5563;font-weight:normal;padding:4px 6px;position:sticky;left:0;top:0;z-index:3;background:#f3f4f6;text-align:left}
 .lyr{font-size:11px;color:#4b5563;font-weight:normal;padding:5px 7px;background:#f3f4f6;position:sticky;top:0;z-index:2;text-align:center}
 .lyr.out{color:#111;font-weight:bold;border-left:2px solid #6b7280}
 .tok{font-family:ui-monospace,Menlo,monospace;font-size:11px;padding:4px 8px;background:#f3f4f6;position:sticky;left:0;z-index:1;white-space:nowrap;text-align:left;font-weight:normal}
-.tok.tgt{background:#1e40af;color:#fff} .tok .pn{color:#9ca3af;margin-right:6px;font-size:10px} .tok.tgt .pn{color:#c7d2fe}
+.tok.tgt{background:#1e40af;color:#fff} .tok .pn{color:#4b5563;margin-right:6px;font-size:10px} .tok.tgt .pn{color:#c7d2fe}
 .cell{min-width:56px;max-width:96px;height:32px;padding:2px 4px;text-align:center;vertical-align:middle}
 .cell.out{border-left:2px solid #6b7280}
 .cell .w{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1}
-.cell .sup{display:block;font-size:10px;font-weight:400;opacity:.95;line-height:1}
+.cell .sup{display:block;font-size:10px;font-weight:400;line-height:1}
 .cell.peak{outline:3px solid #1e40af;outline-offset:-3px}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.cell.peak .pk{display:block;font-size:9px;font-weight:700;background:#1e40af;color:#fff;border-radius:3px;padding:0 4px;margin:1px auto 0;width:max-content;line-height:1.45;letter-spacing:.02em}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
-@media (forced-colors: active){.lg{forced-color-adjust:none} .cell.peak,.tok.tgt{outline:3px solid Highlight}}
+@media (forced-colors: active){.cell.peak,.tok.tgt{outline:3px solid Highlight}}
 """
 
 _CREDIT = (
@@ -208,7 +209,7 @@ def build_readable_page(
         tgt = bool(best) and pos == best[2]
         tok = _clean(sd.context_token_strs[sd.ctx_offset + pos], cap=16)
         cells = [f'<th class="tok{" tgt" if tgt else ""}" scope="row">'
-                 f'<span class="pn" aria-hidden="true">{sd.ctx_offset + pos}</span>{tok}</th>']
+                 f'<span class="pn">{sd.ctx_offset + pos}</span><bdi>{tok}</bdi></th>']
         for li in col_lis:
             tid = int(sd.top_ids[pos, li, 0])
             word = _clean(vocab.get(tid, "?"))
@@ -218,10 +219,11 @@ def build_readable_page(
             # the only signal (colourblind, grayscale, braille, forced-colors).
             sup = f'<span class="sup">#{rank + 1}</span>' if 0 <= rank <= 999 else ""
             peak = bool(best) and li == best[1] and pos == best[2]
-            peak_sr = f'<span class="sr-only">{html.escape(s["peak_sr"])}</span>' if peak else ""
+            peak_mark = (f'<span class="pk">{html.escape(s["peak_label"])}</span>'
+                         f'<span class="sr-only">{html.escape(s["peak_sr"])}</span>') if peak else ""
             cls = "cell" + (" peak" if peak else "") + (" out" if sd.layers[li] == final else "")
             cells.append(f'<td class="{cls}" style="background:{bg};color:{fg}">'
-                         f'<span class="w">{word}</span>{sup}{peak_sr}</td>')
+                         f'<span class="w"><bdi>{word}</bdi></span>{sup}{peak_mark}</td>')
         rows.append(f"<tr>{''.join(cells)}</tr>")
     tbody = f'<tbody>{"".join(rows)}</tbody>'
 
@@ -235,7 +237,7 @@ def build_readable_page(
         rule = s["rule_tracked"].format(concept=esc_concept)
         key = (f'<p class="key"><span aria-hidden="true">&#128161;</span> '
                f'<b>{html.escape(s["key_finding"])}</b> '
-               + s["callout_tracked"].format(word=best_tok, layer=sd.layers[best[1]],
+               + s["callout_tracked"].format(word=f"<bdi>{best_tok}</bdi>", layer=sd.layers[best[1]],
                                               concept=esc_concept, rank=best[0] + 1, vocab=vocab_n)
                + '</p>')
         legend = (f'<div class="legend">{html.escape(s["legend_label"].format(concept=concept))}'
@@ -261,10 +263,13 @@ def build_readable_page(
         nav = (f'<nav class="langnav" aria-label="{html.escape(s["lang_nav"])}">'
                + " · ".join(parts) + "</nav>")
 
-    caption = f'<caption class="sr-only">{html.escape(s["caption"])}</caption>'
+    caption = f'<caption class="sr-only" translate="yes">{html.escape(s["caption"])}</caption>'
     region = html.escape(s["region_label"])
     footer = html.escape(s["footer"].format(
         model=model_name, shown=len(col_lis), total=sd.layers[-1] + 1, tokens=sd.seq_len))
+    # best-effort translation note only appears on non-English pages (English has
+    # nothing translated, so the note there would be noise). Absent key -> skipped.
+    tnote = f'{html.escape(s["translation_note"])}<br>' if s.get("translation_note") else ""
 
     return (
         f'<!doctype html><html lang="{html.escape(lang)}" dir="{html.escape(s["dir"])}">'
@@ -281,6 +286,6 @@ def build_readable_page(
         f'{legend}'
         f'<div class="wrap" role="region" aria-label="{region}" tabindex="0">'
         f'<table translate="no">{caption}{thead}{tbody}</table></div>'
-        f'<p class="fine">{footer}<br>{_CREDIT}</p>'
+        f'<p class="fine">{footer}<br>{tnote}{_CREDIT}</p>'
         f'</main></body></html>'
     )
