@@ -118,6 +118,7 @@ def build_index(lang, files):
         f'<p>{esc(L["intro"])}</p>'
         f'<h2>{esc(L["howto_h"])}</h2>'
         f'<div class="legend">{U["how_to_read"]}<div style="margin-top:6px">{swatches}</div></div>'
+        f'<p class="tag" style="font-size:13px">{esc(U["counting_note"])}</p>'
         f'<h2>{esc(L["demos_h"])}</h2><p class="tag">{esc(L["demos_sub"])}</p>'
         f'<div class="grid">{cards}</div>'
         f'<h2>{esc(L["prompts_h"])}</h2><p>{esc(L["prompts_body"])} '

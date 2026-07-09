@@ -29,7 +29,10 @@ UI_STRINGS = {
                          '<b>darker and lower numbers mean higher</b>.'),
         "rule_plain": "Each box shows the top word that spot leans toward.",
         "key_finding": "Key finding:",
-        "callout_tracked": ('on the row for <b>“{word}”</b>, deep in the model (layer {layer}), '
+        "depth_early": "early in the model (layer {layer})",
+        "depth_mid": "midway through the model (layer {layer})",
+        "depth_deep": "deep in the model (layer {layer})",
+        "callout_tracked": ('on the row for <b>“{word}”</b>, {depth}, '
                             '“{concept}” is the model’s <b>#{rank}</b> pick out of {vocab} words, '
                             'though the prompt never says it. The model has worked out the answer '
                             'before writing a thing. In the table below, that box has a blue outline '
@@ -50,6 +53,9 @@ UI_STRINGS = {
         "peak_label": "peak",
         "peak_sr": "peak: the highest rank for the tracked concept on this page",
         "footer": "{model} · {shown} of {total} layers · {tokens} tokens",
+        "counting_note": ('A note on counting: the "248,320 words" total is the model’s vocabulary '
+                          'of tokens (word pieces and symbols), not whole dictionary words. "Words" is '
+                          'the plain-language shorthand.'),
     },
     "es": {
         "dir": "ltr",
@@ -68,7 +74,10 @@ UI_STRINGS = {
                          '<b>más oscuro y números más bajos significan más alto</b>.'),
         "rule_plain": "Cada recuadro muestra la palabra principal hacia la que se inclina ese punto.",
         "key_finding": "Hallazgo clave:",
-        "callout_tracked": ('en la fila de <b>“{word}”</b>, en lo profundo del modelo (capa {layer}), '
+        "depth_early": "al principio del modelo (capa {layer})",
+        "depth_mid": "a mitad del modelo (capa {layer})",
+        "depth_deep": "en lo profundo del modelo (capa {layer})",
+        "callout_tracked": ('en la fila de <b>“{word}”</b>, {depth}, '
                             '“{concept}” es la <b>#{rank}</b> opción del modelo entre {vocab} palabras, '
                             'aunque la instrucción nunca lo dice. El modelo ya resolvió la respuesta '
                             'antes de escribir nada. En la tabla de abajo, ese recuadro tiene un borde '
@@ -91,6 +100,9 @@ UI_STRINGS = {
         "peak_sr": "pico: el rango más alto del concepto seguido en esta página",
         "footer": "{model} · {shown} de {total} capas · {tokens} tokens",
         "translation_note": "La traducción es preliminar; se agradecen correcciones.",
+        "counting_note": ('Nota sobre el conteo: el total de "248,320 palabras" es el vocabulario de '
+                          'tokens del modelo (fragmentos de palabras y símbolos), no palabras completas '
+                          'de un diccionario. "Palabras" es la forma sencilla de decirlo.'),
     },
     "fr": {
         "dir": "ltr",
@@ -109,7 +121,10 @@ UI_STRINGS = {
                          '<b>plus foncé et des nombres plus bas signifient plus haut</b>.'),
         "rule_plain": "Chaque case montre le mot principal vers lequel cet endroit penche.",
         "key_finding": "Constat clé :",
-        "callout_tracked": ('sur la ligne de <b>“{word}”</b>, au plus profond du modèle (couche {layer}), '
+        "depth_early": "au début du modèle (couche {layer})",
+        "depth_mid": "à mi-chemin du modèle (couche {layer})",
+        "depth_deep": "au plus profond du modèle (couche {layer})",
+        "callout_tracked": ('sur la ligne de <b>“{word}”</b>, {depth}, '
                             '“{concept}” est le <b>#{rank}</b> choix du modèle parmi {vocab} mots, bien '
                             'que l’invite ne le dise jamais. Le modèle a trouvé la réponse avant '
                             'd’écrire quoi que ce soit. Dans le tableau ci-dessous, cette case a un '
@@ -133,6 +148,9 @@ UI_STRINGS = {
         "peak_sr": "pic : le rang le plus élevé du concept suivi sur cette page",
         "footer": "{model} · {shown} sur {total} couches · {tokens} tokens",
         "translation_note": "La traduction est préliminaire ; les corrections sont bienvenues.",
+        "counting_note": ('Note sur le comptage : le total de "248 320 mots" est le vocabulaire de '
+                          'tokens du modèle (fragments de mots et symboles), pas des mots entiers de '
+                          'dictionnaire. "Mots" est le raccourci en langage simple.'),
     },
     "zh": {
         "dir": "ltr",
@@ -148,7 +166,10 @@ UI_STRINGS = {
                          '<b>颜色越深、数字越小表示排名越高</b>。'),
         "rule_plain": "每个方格显示该处最倾向的词。",
         "key_finding": "关键发现：",
-        "callout_tracked": ('在<b>“{word}”</b>这一行，在模型深处（第 {layer} 层），“{concept}” 是模型在 '
+        "depth_early": "在模型的浅层（第 {layer} 层）",
+        "depth_mid": "在模型的中间层（第 {layer} 层）",
+        "depth_deep": "在模型深处（第 {layer} 层）",
+        "callout_tracked": ('在<b>“{word}”</b>这一行，{depth}，“{concept}” 是模型在 '
                             '{vocab} 个词中的第 <b>#{rank}</b> 选择，尽管提示词从未提到它。模型在写出任何'
                             '内容之前就已经得出了答案。在下方的表格中，该方格带有蓝色边框并标注为"峰值"。'),
         "callout_plain": ('仅显示每个单元格最倾向的词（{why}），因此没有概念热力图。传入一个单 token 的概念'
@@ -167,6 +188,8 @@ UI_STRINGS = {
         "peak_sr": "峰值：本页中被追踪概念的最高排名",
         "footer": "{model} · {total} 层中的 {shown} 层 · {tokens} 个 token",
         "translation_note": "翻译为初步版本，欢迎提交更正。",
+        "counting_note": ('关于计数的说明：“248,320 个词”是模型的 token 词表（词片段和符号），'
+                          '并非完整的字典词。“词”只是通俗的简称。'),
     },
     "am": {
         "dir": "ltr",
@@ -183,7 +206,10 @@ UI_STRINGS = {
                          'ሳጥኑም ያንን ደረጃ በቁጥር ያሳያል፦ <b>ጠቆር ያለና ዝቅተኛ ቁጥር ማለት ከፍ ያለ ማለት ነው</b>።'),
         "rule_plain": "እያንዳንዱ ሳጥን ያ ቦታ ወደሚያዘነብልበት ዋና ቃል ያሳያል።",
         "key_finding": "ቁልፍ ግኝት፦",
-        "callout_tracked": ('በ<b>“{word}”</b> ረድፍ ላይ፣ በሞዴሉ ጥልቀት ውስጥ (ንብርብር {layer})፣ “{concept}” '
+        "depth_early": "በሞዴሉ መጀመሪያ ላይ (ንብርብር {layer})",
+        "depth_mid": "በሞዴሉ መካከል (ንብርብር {layer})",
+        "depth_deep": "በሞዴሉ ጥልቀት ውስጥ (ንብርብር {layer})",
+        "callout_tracked": ('በ<b>“{word}”</b> ረድፍ ላይ፣ {depth}፣ “{concept}” '
                             'ከ{vocab} ቃላት መካከል የሞዴሉ <b>#{rank}</b> ምርጫ ነው፣ ምንም እንኳ ጥያቄው ፈጽሞ '
                             'ባይጠቅሰውም። ሞዴሉ ምንም ከመጻፉ በፊት መልሱን አግኝቶታል። ከታች ባለው ሠንጠረዥ ውስጥ ያ ሳጥን '
                             'ሰማያዊ ድንበር ያለውና "ጫፍ" ተብሎ ተለይቷል።'),
@@ -204,6 +230,8 @@ UI_STRINGS = {
         "peak_sr": "ጫፍ፦ በዚህ ገጽ ላይ የተከታተለው ፅንሰ-ሐሳብ ከፍተኛ ደረጃ",
         "footer": "{model} · ከ{total} ንብርብሮች {shown} · {tokens} tokens",
         "translation_note": "ትርጉሙ የመጀመሪያ ደረጃ ነው፤ እርማቶች እንኳን ደህና መጡ።",
+        "counting_note": ('ስለ ቆጠራ ማስታወሻ፦ "248,320 ቃላት" የሚለው የሞዴሉ የቶከኖች መዝገበ-ቃላት ነው '
+                          '(የቃላት ቁርጥራጮችና ምልክቶች)፣ ሙሉ የመዝገበ-ቃላት ቃላት አይደሉም። "ቃላት" ቀላል አጠራር ነው።'),
     },
 }
 
@@ -233,8 +261,8 @@ LANDING = {
              "A Python off-by-one: the model registers “index” at #2 internally."),
             ("Surface vs. inside",
              "The out-loud answer is generic, but “Human” reaches #1 deep inside the model."),
-            ("Context binding: Maryland vs. Michigan",
-             "Real context binds the acronym MDOT to Maryland (#1) over Michigan."),
+            ("Context binding: Maryland vs. Michigan vs. Mississippi",
+             "Real context binds the acronym MDOT to Maryland (#1) over Michigan and Mississippi, whose DOTs are also MDOT."),
         ],
     },
     "es": {
@@ -260,8 +288,8 @@ LANDING = {
              "Un error de índice en Python: el modelo registra “index” en el puesto #2 por dentro."),
             ("Superficie vs. interior",
              "La respuesta en voz alta es genérica, pero “Human” llega al #1 en lo profundo del modelo."),
-            ("Enlace de contexto: Maryland vs. Michigan",
-             "El contexto real vincula la sigla MDOT con Maryland (#1) en vez de Michigan."),
+            ("Enlace de contexto: Maryland vs. Michigan vs. Mississippi",
+             "El contexto real vincula la sigla MDOT con Maryland (#1) en vez de Michigan o Mississippi, cuyos DOT también son MDOT."),
         ],
     },
     "fr": {
@@ -287,8 +315,8 @@ LANDING = {
              "Une erreur d'indice en Python : le modèle enregistre “index” au rang #2 en interne."),
             ("Surface vs. intérieur",
              "La réponse à voix haute est générique, mais “Human” atteint #1 au fond du modèle."),
-            ("Liaison de contexte : Maryland vs. Michigan",
-             "Le contexte réel lie le sigle MDOT au Maryland (#1) plutôt qu'au Michigan."),
+            ("Liaison de contexte : Maryland vs. Michigan vs. Mississippi",
+             "Le contexte réel lie le sigle MDOT au Maryland (#1) plutôt qu'au Michigan ou au Mississippi, dont les DOT sont aussi MDOT."),
         ],
     },
     "zh": {
@@ -312,8 +340,8 @@ LANDING = {
              "一个 Python 差一错误：模型在内部将“index”记为第 #2 概念。"),
             ("表面 vs. 内部",
              "说出口的答案很笼统，但“Human”在模型深处达到第 #1。"),
-            ("上下文绑定：马里兰 vs. 密歇根",
-             "真实上下文把缩写 MDOT 绑定到马里兰（#1）而非密歇根。"),
+            ("上下文绑定：马里兰 vs. 密歇根 vs. 密西西比",
+             "真实上下文把缩写 MDOT 绑定到马里兰（#1），而非密歇根或密西西比（它们的交通部也叫 MDOT）。"),
         ],
     },
     "am": {
@@ -339,8 +367,8 @@ LANDING = {
              "የPython የቁጥር ስህተት፦ ሞዴሉ “index”ን በውስጡ #2 አድርጎ ይመዘግባል።"),
             ("ውጫዊ vs. ውስጣዊ",
              "ጮክ ብሎ የሚናገረው መልስ አጠቃላይ ነው፣ ግን “Human” በሞዴሉ ጥልቀት #1 ይደርሳል።"),
-            ("የዐውደ-ጽሑፍ ትስስር፦ ማሪላንድ vs. ሚቺጋን",
-             "እውነተኛ ዐውደ-ጽሑፍ ምህጻረ ቃሉን MDOT ከሚቺጋን ይልቅ ከማሪላንድ (#1) ጋር ያስረዋል።"),
+            ("የዐውደ-ጽሑፍ ትስስር፦ ማሪላንድ vs. ሚቺጋን vs. ሚሲሲፒ",
+             "እውነተኛ ዐውደ-ጽሑፍ ምህጻረ ቃሉን MDOT ከሚቺጋንና ከሚሲሲፒ ይልቅ ከማሪላንድ (#1) ጋር ያስረዋል፤ የእነሱም DOT MDOT ይባላል።"),
         ],
     },
 }

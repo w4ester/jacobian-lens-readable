@@ -236,9 +236,15 @@ def build_readable_page(
         title = s["title_tracked"].format(concept=esc_concept)
         chip = f'<span class="chip">{html.escape(s["tracking"].format(concept=concept))}</span>&nbsp; '
         rule = s["rule_tracked"].format(concept=esc_concept)
+        # Depth word must match the data: early (<1/3), midway (1/3..2/3), deep (>2/3).
+        # A hardcoded "deep" would be wrong for an early peak (e.g. overdose at layer 10).
+        peak_layer = sd.layers[best[1]]
+        frac = peak_layer / n_layers if n_layers else 1.0
+        depth_key = "depth_deep" if frac > 2 / 3 else "depth_mid" if frac >= 1 / 3 else "depth_early"
+        depth = s[depth_key].format(layer=peak_layer)
         key = (f'<p class="key"><span aria-hidden="true">&#128161;</span> '
                f'<b>{html.escape(s["key_finding"])}</b> '
-               + s["callout_tracked"].format(word=f"<bdi>{best_tok}</bdi>", layer=sd.layers[best[1]],
+               + s["callout_tracked"].format(word=f"<bdi>{best_tok}</bdi>", depth=depth,
                                               concept=esc_concept, rank=best[0] + 1, vocab=vocab_n)
                + '</p>')
         legend = (f'<div class="legend">{html.escape(s["legend_label"].format(concept=concept))}'
