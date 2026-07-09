@@ -319,7 +319,7 @@ semantics (`<caption>`, `<thead>`/`<tbody>`, `<th scope>`), states the key findi
 *before* the table so a screen reader announces it first, and prints every meaningful rank as a number
 so **color is never the only signal** (colorblind, grayscale, braille, and high-contrast modes all
 keep the information). The wide table is keyboard-scrollable, the document sets `lang`/`dir` for the
-right screen-reader voice, and there is no JavaScript, audio, or motion, so deafblind and
+right screen-reader voice, and there is no JavaScript, audio, or animation, so deafblind and
 reduced-motion users get the full experience. Fixed labels are localizable through the `lang` and
 `ui_strings` arguments.
 
