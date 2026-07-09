@@ -314,13 +314,13 @@ If you reference the underlying method, cite the paper, not this repo:
 
 ## Accessibility
 
-The generated page is built to be read by everyone, not just sighted mouse users. It uses real table
+I built the generated page to be read by everyone, not just sighted mouse users. It uses real table
 semantics (`<caption>`, `<thead>`/`<tbody>`, `<th scope>`), states the key finding in plain text
 *before* the table so a screen reader announces it first, and prints every meaningful rank as a number
 so **color is never the only signal** (colorblind, grayscale, braille, and high-contrast modes all
-keep the information). The wide table is keyboard-scrollable, the document sets `lang`/`dir` for the
-right screen-reader voice, and there is no JavaScript, audio, or animation, so deafblind and
-reduced-motion users get the full experience. Fixed labels are localizable through the `lang` and
+keep the information). The wide table is keyboard-scrollable, I set `lang`/`dir` so screen readers
+use the right voice, and there is no JavaScript, audio, or animation, so the full experience holds up
+on a refreshable braille display and with motion turned off. Fixed labels are localizable through the `lang` and
 `ui_strings` arguments.
 
 ## Using and sharing
