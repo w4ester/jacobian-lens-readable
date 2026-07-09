@@ -247,9 +247,9 @@ them all, or just write your own prompt as above.
 
 ## The `SliceData` contract
 
-Upstream is a frozen reference implementation, which is an advantage: the fields this renderer
-reads are effectively a stable contract, so this package cannot be broken by upstream churn. It
-uses only:
+Upstream is a reference implementation rather than a fast-moving library, which is an advantage:
+the fields this renderer reads are effectively a stable contract, so this package is unlikely to
+break from upstream churn. It uses only:
 
 ```
 seq_len · layers · context_token_strs · top_ids · rank_tensor ·

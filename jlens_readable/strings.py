@@ -248,8 +248,9 @@ LANDING = {
         "prompts_h": "Pruébalo tú mismo, de forma segura",
         "prompts_body": "Instrucciones de instalación y de guía para copiar y pegar (explican cada paso antes de actuar):",
         "prompts_link": "Instrucciones de instalación y de guía",
-        "credit": ("El Jacobian Lens y sus hallazgos son de Anthropic. Esto es solo una capa de "
-                   "visualización. No está afiliado ni respaldado por Anthropic."),
+        "credit": ("El Jacobian Lens y sus hallazgos son de Anthropic; los pesos ajustados son de "
+                   "Neuronpedia. Esto es solo una capa de visualización. No está afiliado ni "
+                   "respaldado por Anthropic, Neuronpedia ni el equipo de Qwen."),
         "cards": [
             ("Razonamiento de varios pasos: mira aparecer “Italia”",
              "“el país con forma de bota”: el modelo llega a Italia en el puesto #3 antes de responder."),
@@ -274,8 +275,9 @@ LANDING = {
         "prompts_h": "Essayez vous-même, en toute sécurité",
         "prompts_body": "Invites d'installation et de guidage à copier-coller (elles expliquent chaque étape avant d'agir) :",
         "prompts_link": "Invites d'installation et de guidage",
-        "credit": ("Le Jacobian Lens et ses résultats appartiennent à Anthropic. Ceci est une couche "
-                   "de visualisation. Non affilié à Anthropic ni approuvé par Anthropic."),
+        "credit": ("Le Jacobian Lens et ses résultats appartiennent à Anthropic ; les poids ajustés "
+                   "sont ceux de Neuronpedia. Ceci est une couche de visualisation. Non affilié à "
+                   "Anthropic, Neuronpedia ou l'équipe Qwen, ni approuvé par eux."),
         "cards": [
             ("Raisonnement à plusieurs étapes : voir apparaître “Italie”",
              "“le pays en forme de botte” : le modèle atteint Italie au rang #3 avant de répondre."),
@@ -299,8 +301,8 @@ LANDING = {
         "prompts_h": "自己安全地试一试",
         "prompts_body": "可复制粘贴的安装与讲解提示词（它们会在执行前先解释每一步）：",
         "prompts_link": "安装与讲解提示词",
-        "credit": ("Jacobian Lens 及其研究成果归 Anthropic 所有。本项目只是一个可视化层，"
-                   "与 Anthropic 无关联，也未获其认可。"),
+        "credit": ("Jacobian Lens 及其研究成果归 Anthropic 所有，拟合权重归 Neuronpedia 所有。"
+                   "本项目只是一个可视化层，与 Anthropic、Neuronpedia 或 Qwen 团队均无关联，也未获其认可。"),
         "cards": [
             ("多跳推理：看着“意大利”浮现",
              "“形状像靴子的国家”：模型在回答之前就把意大利排到了第 #3 位。"),
@@ -325,8 +327,9 @@ LANDING = {
         "prompts_h": "በራስህ በደህንነት ሞክረው",
         "prompts_body": "ገልብጠህ የምትለጥፋቸው የመጫኛና የመመሪያ ጥያቄዎች (ከመፈጸማቸው በፊት እያንዳንዱን ደረጃ ያብራራሉ)፦",
         "prompts_link": "የመጫኛና የመመሪያ ጥያቄዎች",
-        "credit": ("Jacobian Lens እና ግኝቶቹ የAnthropic ናቸው። ይህ የማሳያ ንብርብር ብቻ ነው። "
-                   "ከAnthropic ጋር ግንኙነት የለውም፣ በእሱም አልተደገፈም።"),
+        "credit": ("Jacobian Lens እና ግኝቶቹ የAnthropic ናቸው፤ የተስተካከሉት ክብደቶች የNeuronpedia ናቸው። "
+                   "ይህ የማሳያ ንብርብር ብቻ ነው። ከAnthropic፣ ከNeuronpedia ወይም ከQwen ቡድን ጋር ግንኙነት "
+                   "የለውም፣ በእነሱም አልተደገፈም።"),
         "cards": [
             ("የበርካታ ደረጃ አስተሳሰብ፦ “ጣሊያን” ሲወጣ ተመልከት",
              "“ቅርጹ እንደ ቦት ጫማ የሆነው አገር”፦ ሞዴሉ ከመመለሱ በፊት ጣሊያንን #3 ላይ ያደርሳል።"),

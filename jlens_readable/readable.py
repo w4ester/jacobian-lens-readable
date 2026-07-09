@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
 """A legible, accessible, multilingual, dependency-free view for the Jacobian Lens.
 
-The upstream repo ships one visualization: a dense d3 heat-map of one glyph per
-token. It answers a researcher's questions well, but a newcomer or a classroom
-cannot read it, and a screen-reader user cannot use it at all.
+The upstream repo ships one visualization: a dense, researcher-oriented d3 grid of
+tiny per-cell tokens. It answers a researcher's questions well, but a newcomer or a
+classroom cannot read it, and a screen-reader user cannot use it at all.
 
 This module renders the *same* ``jlens.vis.SliceData`` as a plain HTML table you
 can read at a glance, and that a screen reader or braille display can read too:
@@ -125,7 +125,8 @@ _CREDIT = (
     'Rendered with <a href="https://github.com/w4ester/jacobian-lens-readable">'
     'jacobian-lens-readable</a> · method: Anthropic Jacobian Lens '
     '(<a href="https://transformer-circuits.pub/2026/workspace">paper</a> · '
-    '<a href="https://github.com/anthropics/jacobian-lens">code</a>)'
+    '<a href="https://github.com/anthropics/jacobian-lens">code</a>) · lens fitted by '
+    '<a href="https://huggingface.co/neuronpedia/jacobian-lens">Neuronpedia</a>'
 )
 
 
