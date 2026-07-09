@@ -1,6 +1,6 @@
 # Contributing
 
-First, the warm part: please **use, run, fork, and build on** this project however you like. That is
+First, please **use, run, fork, and build on** this project however you like. That is
 exactly what the Apache-2.0 license is for, and a fork you own is the best home for your own ideas.
 
 **This repository does not accept contributions.** It is a small companion project, kept as a stable,
