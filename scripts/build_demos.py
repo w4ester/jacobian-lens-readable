@@ -51,7 +51,7 @@ def demos(tok):
         ("maryland-human-services",
          F + "food assistance and foster care are administered by the Department of", "Human"),
         ("maryland-mdot-disambiguation",
-         "Fact: MDOT operates the Baltimore Metro and the Chesapeake Bay Bridge. "
+         "Fact: MDOT operates the Baltimore Metro and the MARC commuter trains. "
          "MDOT is the transportation agency of the U.S. state of", "Maryland"),
     ]
 

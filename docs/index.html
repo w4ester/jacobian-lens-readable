@@ -55,7 +55,7 @@ code { background: #f2f2f2; padding: 1px 5px; border-radius: 4px; font-size: 13p
 
 <p>When a language model answers you, it lines up ideas a few steps before it writes any of them.
 The <b>Jacobian Lens</b> (Anthropic research) turns that internal activity back into readable words.
-The official tool draws it as a dense grid of single letters that only a researcher can parse. This
+The official tool draws it as a dense, researcher-oriented grid of tiny per-cell tokens that only a specialist can parse. This
 project renders the <em>same data</em> as a plain table anyone can read. That is the whole idea of
 <b>accessible intelligence</b>: the insight should be open to everyone, not just people who read d3.</p>
 
@@ -82,7 +82,7 @@ actually says). The <b>color</b> of a box is how highly it ranks the tracked con
 </div>
 
 <h2>Live demos</h2>
-<p style="font-size:14px;color:#666">All run on the open <code>Qwen3.5-4B</code> model with Anthropic's public lens.</p>
+<p style="font-size:14px;color:#666">All run on the open <code>Qwen3.5-4B</code> model with the public J-lens (Anthropic's method, Neuronpedia's fit).</p>
 <div class="grid">
   <a class="card" href="multihop.html">
     <h3>🧩 Multi-hop reasoning: watch "Italy" appear</h3>
@@ -106,8 +106,8 @@ actually says). The <b>color</b> of a box is how highly it ranks the tracked con
     deep inside (layer 30). The right concept is in there, beneath the generic surface word.</p>
   </a>
   <a class="card" href="maryland-mdot-disambiguation.html">
-    <h3>🌉 Context binding: Maryland vs. Michigan</h3>
-    <p>"MDOT operates the Baltimore Metro and Chesapeake Bay Bridge." Real context correctly binds the
+    <h3>🚆 Context binding: Maryland vs. Michigan</h3>
+    <p>"MDOT operates the Baltimore Metro and MARC commuter trains." Real context correctly binds the
     ambiguous acronym to <b>Maryland (#1)</b> over Michigan (whose DOT is also "MDOT").</p>
   </a>
 </div>

@@ -14,7 +14,7 @@ curious enough to look, not just to people who can read a research-grade heat-ma
 
 When a language model answers you, it lines up ideas a few steps before it writes any of them.
 The Jacobian Lens turns that internal activity back into readable words. The official tool
-draws it as a dense d3 heat-map with a single glyph per token, which speaks fluent researcher.
+draws it as a dense, researcher-oriented d3 grid of tiny per-cell tokens, which speaks fluent researcher.
 This project renders the **same `jlens.vis.SliceData`** as a plain table that speaks plain
 language, so the same insight is open to a student, a teacher, a superintendent, or anyone else:
 
@@ -178,6 +178,10 @@ Each **row** is one word of the prompt. Reading a row **left to right** shows ho
 guess for the **next** word firms up as it goes deeper, ending in the **output** column (what it
 actually says). The **color** of a box is how highly it ranks the tracked concept, darker for
 higher: top choice, top 5, top 20, top 100, top 1000, or not close.
+
+> A note on counting: when a demo says a concept is the model's "#3 out of 248,320 words," that
+> total is the model's vocabulary of **tokens**, which includes word pieces and symbols, not a
+> dictionary of whole words. "Words" is the plain-language shorthand used in the demos.
 
 ## Install (manual, for developers)
 
