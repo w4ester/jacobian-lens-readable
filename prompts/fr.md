@@ -60,6 +60,16 @@ The steps, each explained first, with the pauses above:
   6. Open the slice.html it writes and tell me, in one sentence, what rank the word
      "Italy" reaches and in which layer, for the prompt about the country shaped
      like a boot.
+  7. Once that first example works, offer to keep going with my own ideas, using this
+     chat. I do not need to write code: I tell you in plain language what I am curious
+     about (say, whether the model leans toward "Paris" when I describe the city on the
+     Seine without naming it), and you copy example.py to a new file, change the prompt
+     line and the concept line, run it, and open the page it writes, saved under its own
+     name so my earlier tries stay. A good example tracks a concept the prompt implies but
+     never says. Explain each change first (RULE 1); this is our own local file, not
+     downloaded code, so no extra pause is needed, and RULE 2 still holds for anything new
+     we install, download, or load. There is no form or app for this: this chat is how I
+     make new examples.
 
 If a step fails, read the error and explain to me in plain language what went wrong
 and what you want to try next. A simple retry is fine once you have explained it.
